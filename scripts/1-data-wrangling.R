@@ -1,25 +1,36 @@
+#Libraries
+
+library(dplyr)
+
+# Load original data
 data <- read.csv(file = "data/bike_buyers.csv")
 
-library(skimr)
-library(caret)
+# Structure
+str(data)
 
+# Delete first column: ID of customer. It's not a predictable variable
 
-skimmed_data <-  skim(data)
+data <- data[, -1]
 
-## Report
-# skimmed_data[, c(1:5, 9:11, 13, 15:16)]
+# Factors variables and levels
 
+data <-  data %>% 
+  mutate(Marital.Status = factor(Marital.Status, levels = c("Married", "Single")),
+         Gender = factor(Gender, levels = c("Female", "Male")),
+         Education = factor(Education),
+         Occupation = factor(Occupation),
+         Home.Owner = factor(Home.Owner, levels = c("No", "Yes")),
+         Commute.Distance = factor(Commute.Distance),
+         Region = factor(Region),
+         Purchased.Bike = factor(Purchased.Bike, levels = c("No", "Yes"))
+         )
 
-preProcess_missingdata <-  preProcess(data, method = "knnImpute")
+# Convert Purchase to a binary 0-1 variable
+##data$Purchased.Bike = factor((data$Purchased.Bike == "Yes") * 1)
 
-##Report
-#preProcess_missingdata
+# Summary
 
-data <-  predict(preProcess_missingdata, newdata = data)
-
-
-##Report
-#anyNA(data)
+summary(data)
 
 # Save the data-set
 
